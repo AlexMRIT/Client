@@ -34,9 +34,10 @@ namespace Client.UI.Authentication
 
         private void CallButtonForEnterInSystem()
         {
-            bool result = _uiLinq.LoginField.text.Valid().CheckErrorCode();
+            bool successfullLogin = _uiLinq.LoginField.text.Valid().CheckErrorCode();
+            bool successfullPassword = _uiLinq.PasswordField.text.Valid().CheckErrorCode();
 
-            if (result)
+            if (successfullLogin && successfullPassword)
                 _network.SendPacket(SendPacketTryAuthentication.ToPacket(_uiLinq.LoginField.text, _uiLinq.PasswordField.text));
         }
 
