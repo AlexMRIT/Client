@@ -37,13 +37,24 @@ namespace Client
 
         private async Task<bool> TryClientConnect()
         {
-            return await _clientProcessor.TryClientConnect(IPAddress.Any, ApplicationConfig.Port);
+            return await _clientProcessor.TryClientConnect(IPAddress.Parse("127.0.0.1"), ApplicationConfig.Port);
         }
 
         private void FixedUpdate()
         {
             if (_receiveBufferQueue.TryDequeue(out byte[] buffer))
                 _clientProcessor.PacketHandler.HandlerPacket(buffer.ToPacket());
+        }
+
+        private void OnDisable()
+        {
+            _clientProcessor.ClientDisconnect();
+            Debug.Log("Close connecting");
+        }
+
+        public void SendPacket(NetworkPacket packet)
+        {
+            _clientProcessor.WriteAsync(packet);
         }
     }
 }
