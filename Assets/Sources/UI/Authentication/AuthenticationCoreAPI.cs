@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Client.Enums;
 using Client.Utilite;
 using Client.Exceptions;
 using Client.RequestPackets;
@@ -12,6 +13,11 @@ namespace Client.UI.Authentication
 
         private UILinqAuthentication _uiLinq;
         private ModelViewConnection _network;
+
+        private void OnEnable()
+        {
+            DepedencyProvider.TryAddObject(DepedencyProvider.Code.ObjectAuthenticationAPI, gameObject);
+        }
 
         private void Awake()
         {
@@ -34,8 +40,8 @@ namespace Client.UI.Authentication
 
         private void CallButtonForEnterInSystem()
         {
-            bool successfullLogin = _uiLinq.LoginField.text.Valid().CheckErrorCode();
-            bool successfullPassword = _uiLinq.PasswordField.text.Valid().CheckErrorCode();
+            bool successfullLogin = _uiLinq.LoginField.text.Valid(ValidType.Login).CheckErrorCode();
+            bool successfullPassword = _uiLinq.PasswordField.text.Valid(ValidType.Password).CheckErrorCode();
 
             if (successfullLogin && successfullPassword)
                 _network.SendPacket(SendPacketTryAuthentication.ToPacket(_uiLinq.LoginField.text, _uiLinq.PasswordField.text));
