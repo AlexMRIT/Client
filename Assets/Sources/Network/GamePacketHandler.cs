@@ -23,9 +23,10 @@ namespace Client.Network
             ClientPackets.TryAdd((byte)Opcodes.ServerExitAllCharacterForRoom, typeof(ServerExitAllCharacterForRoom));
             ClientPackets.TryAdd((byte)Opcodes.ServerDeleteMe, typeof(ServerDeleteMe));
             ClientPackets.TryAdd((byte)Opcodes.ServerAddMe, typeof(ServerAddMe));
+            ClientPackets.TryAdd((byte)Opcodes.ServerEnterRoom, typeof(ServerEnterRoom));
         }
 
-        public void HandlerPacket(NetworkPacket packet)
+        public void HandlerPacket(NetworkPacket packet, ModelViewConnection modelViewConnection)
         {
             Debug.Log($"Received packet: {packet.FirstOpcode:X2}:{packet.SecondOpcode:X2}");
 
@@ -34,7 +35,7 @@ namespace Client.Network
             if (ClientPackets.ContainsKey(packet.FirstOpcode))
             {
                 Debug.Log($"Received packet of type: {ClientPackets[packet.FirstOpcode].Name}");
-                networkPacket = (NetworkPacketBaseImplement)Activator.CreateInstance(ClientPackets[packet.FirstOpcode], args: packet);
+                networkPacket = (NetworkPacketBaseImplement)Activator.CreateInstance(ClientPackets[packet.FirstOpcode], packet, modelViewConnection);
             }
 
             if (networkPacket is null)

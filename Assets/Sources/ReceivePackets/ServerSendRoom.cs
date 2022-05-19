@@ -17,15 +17,15 @@ namespace Client.ReceivePackets
         private readonly bool _matchSearch;
         private readonly bool _gamePlaying;
 
-        public ServerSendRoom(NetworkPacket packet)
+        public ServerSendRoom(NetworkPacket packet, ModelViewConnection modelViewConnection)
         {
             _serverListCoreAPI = DepedencyProvider.TryGetObjectByCode(DepedencyProvider.Code.ObjectServerList).GetComponent<ServerListCoreAPI>();
-            _network = DepedencyProvider.TryGetObjectByCode(DepedencyProvider.Code.ObjectClientProcessor).GetComponent<ModelViewConnection>();
+            _network = modelViewConnection;
 
             _serverRooms = new ServerRoom[packet.ReadInt()];
             for (int iterator = 0; iterator < _serverRooms.Length; iterator++)
-                _serverRooms[iterator] = new ServerRoom(packet.ReadInt(), packet.ReadString
-                    (packet.ReadInt()), packet.ReadString(packet.ReadInt()), packet.ReadInt(), packet.ReadInt());
+                _serverRooms[iterator] = new ServerRoom(id: packet.ReadInt(), name: packet.ReadString
+                    (packet.ReadInt()), description: packet.ReadString(packet.ReadInt()), currPlayer: packet.ReadInt(), maxPlayer: packet.ReadInt());
 
             _authentication = packet.InternalReadBool();
             _matchSearch = packet.InternalReadBool();

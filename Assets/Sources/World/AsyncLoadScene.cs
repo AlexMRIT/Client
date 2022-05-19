@@ -15,24 +15,26 @@ namespace Client.World
             _network = GetComponent<ModelViewConnection>();
         }
 
-        public void LoadScene(int sceneIndex, Action<ModelViewConnection> action)
+        public void LoadScene(int sceneIndex, Action<ModelViewConnection> preAction, Action<ModelViewConnection> postAction)
         {
-            StartCoroutine(LoadSceneAsync(sceneIndex, action));
+            StartCoroutine(LoadSceneAsync(sceneIndex, preAction, postAction));
         }
 
-        private IEnumerator LoadSceneAsync(int sceneIndex, Action<ModelViewConnection> action)
+        private IEnumerator LoadSceneAsync(int sceneIndex, Action<ModelViewConnection> preAction, Action<ModelViewConnection> postAction)
         {
             yield return null;
 
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneIndex);
 
             Debug.Log("Pro :" + asyncOperation.progress);
-            action?.Invoke(_network);
+            preAction?.Invoke(_network);
 
             while (!asyncOperation.isDone)
             {
                 yield return null;
             }
+
+            postAction?.Invoke(_network);
         }
     }
 }

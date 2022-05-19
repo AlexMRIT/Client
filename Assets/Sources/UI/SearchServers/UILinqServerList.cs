@@ -22,5 +22,6 @@ namespace Client.UI.SearchServers
         public GameObject WindowCreateServer;
 
         public List<KeyValuePair<int, ServerRoom>> ServerRooms = new List<KeyValuePair<int, ServerRoom>>(0);
+        public List<KeyValuePair<int, ServerInfo>> ServersInfo = new List<KeyValuePair<int, ServerInfo>>(0);
     }
 }

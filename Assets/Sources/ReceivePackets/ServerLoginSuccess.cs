@@ -13,7 +13,7 @@ namespace Client.ReceivePackets
         private readonly bool _matchSearch;
         private readonly bool _gamePlaying;
 
-        public ServerLoginSuccess(NetworkPacket packet)
+        public ServerLoginSuccess(NetworkPacket packet, ModelViewConnection modelViewConnection)
         {
             _autentication = packet.InternalReadBool();
             _matchSearch = packet.InternalReadBool();
@@ -25,7 +25,7 @@ namespace Client.ReceivePackets
             GameObject client = DepedencyProvider.TryGetObjectByCode(DepedencyProvider.Code.ObjectClientProcessor);
             
             client.GetComponent<ModelViewConnection>().ChangeClientSession(_autentication, _matchSearch, _gamePlaying);
-            client.GetComponent<AsyncLoadScene>().LoadScene((int)SceneId.SceneMatchSearch, null);
+            client.GetComponent<AsyncLoadScene>().LoadScene((int)SceneId.SceneMatchSearch, null, null);
 
             return Task.CompletedTask;
         }

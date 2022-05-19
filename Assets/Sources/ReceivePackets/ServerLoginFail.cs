@@ -9,7 +9,7 @@ namespace Client.ReceivePackets
     {
         private readonly ErrorCodeAuthetication _code;
 
-        public ServerLoginFail(NetworkPacket packet)
+        public ServerLoginFail(NetworkPacket packet, ModelViewConnection modelViewConnection)
         {
             _code = (ErrorCodeAuthetication)packet.ReadByte();
         }

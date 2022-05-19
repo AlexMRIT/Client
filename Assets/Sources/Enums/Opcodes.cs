@@ -12,6 +12,7 @@
         ServerCharacterDeath = 0x07,
         ServerExitAllCharacterForRoom = 0x08,
         ServerDeleteMe = 0x09,
-        ServerAddMe = 0x0A
+        ServerAddMe = 0x0A,
+        ServerEnterRoom = 0x0B
     }
 }

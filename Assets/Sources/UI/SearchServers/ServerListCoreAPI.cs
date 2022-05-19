@@ -6,14 +6,16 @@ using Client.Exceptions;
 using Client.RequestPackets;
 using System.Collections.Generic;
 
+#pragma warning disable IDE0044
+
 namespace Client.UI.SearchServers
 {
     [RequireComponent(typeof(UILinqServerList))]
     public sealed class ServerListCoreAPI : MonoBehaviour
     {
-        [SerializeField] private bool _allCrearListener;
+        [SerializeField] private bool _allCrearListener = true;
 
-        private int SelectedServer;
+        private int SelectedServer = -1;
         private UILinqServerList _linqServerList;
         private ModelViewConnection _network;
 
@@ -55,45 +57,59 @@ namespace Client.UI.SearchServers
             _linqServerList.ServerRooms.Add(new KeyValuePair<int, ServerRoom>(server.Id, server));
 
             ServerInfo serverObject = Instantiate(_linqServerList.ServerElement, _linqServerList.ContainerServers).GetComponent<ServerInfo>();
-            serverObject.ServerId = server.Id;
-            serverObject.ServerName.text = server.Name;
-            serverObject.ServerDescription.text = server.Description;
-            serverObject.CountPlayers.text = $"{server.CurrentPlayer}/{server.MaxPlayer}";
+            ServerBuildView.ExecuteBuild(serverObject, server);
+            _linqServerList.ServersInfo.Add(new KeyValuePair<int, ServerInfo>(server.Id, serverObject));
 
             serverObject.SelectServer.AddListener(delegate { CallButtonSelectServer(server.Id); }, clearOldListener: _allCrearListener);
         }
 
         private void CallButtonUpdateServerLists()
         {
+            ClearAllServers();
+            SelectedServer = -1;
             _network.SendPacket(SendPacketTryUpdateServerList.ToPacket(_network.GetClientSession()));
         }
 
         private void CallButtonCreateServer()
         {
             _linqServerList.WindowCreateServer.SetActive(!_linqServerList.WindowCreateServer.gameObject.activeSelf);
+            SelectedServer = -1;
         }
 
         private void CallButtonCreateServerEnd()
         {
             bool successfullName = _linqServerList.ServerName.text.Valid(ValidType.ServerName).CheckErrorCode();
             bool successfullDescription = _linqServerList.ServerDescription.text.Valid(ValidType.Description).CheckErrorCode();
+            SelectedServer = -1;
 
             if (successfullName && successfullDescription)
             {
                 _network.SendPacket(SendPacketTryCreateServer.ToPacket(_linqServerList.ServerName.text, _linqServerList.ServerDescription.text));
                 _linqServerList.WindowCreateServer.SetActive(false);
+                ClearAllServers();
             }
         }
 
         private void CallButtonEnterInServer()
         {
+            if (SelectedServer == -1)
+                return;
 
+            ClearAllServers();
+            _network.SendPacket(SendPacketTryEnterInRoom.ToPacket(SelectedServer, _network.GetClientSession()));
         }
 
         private void CallButtonSelectServer(int id)
         {
             Debug.Log($"The id server: {id}");
             SelectedServer = id;
+        }
+
+        private void ClearAllServers()
+        {
+            _linqServerList.ServerRooms.Clear();
+            _linqServerList.ServersInfo.Select(x => Destroy(x.Value.gameObject));
+            _linqServerList.ServersInfo.Clear();
         }
 
         private void OnDisable()
