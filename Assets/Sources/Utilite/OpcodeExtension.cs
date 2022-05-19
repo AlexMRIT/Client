@@ -8,5 +8,6 @@
         public static readonly byte OpcodeAttackHandle = 0x03;
         public static readonly byte OpcodeEnterRoom = 0x04;
         public static readonly byte OpcodeMovementStopAsync = 0x05;
+        public static readonly byte OpcodeCreateServer = 0x06;
     }
 }

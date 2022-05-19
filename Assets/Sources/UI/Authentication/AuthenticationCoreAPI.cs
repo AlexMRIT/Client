@@ -23,11 +23,11 @@ namespace Client.UI.Authentication
         {
             _uiLinq = GetComponent<UILinqAuthentication>();
 
-            ValidNullReferenceException.Execute(_uiLinq.GetType(), nameof(AuthenticationCoreAPI.Awake));
-            ValidNullReferenceException.Execute(_uiLinq.Enter.GetType(), nameof(AuthenticationCoreAPI.Awake));
-            ValidNullReferenceException.Execute(_uiLinq.Exit.GetType(), nameof(AuthenticationCoreAPI.Awake));
-            ValidNullReferenceException.Execute(_uiLinq.LoginField.GetType(), nameof(AuthenticationCoreAPI.Awake));
-            ValidNullReferenceException.Execute(_uiLinq.PasswordField.GetType(), nameof(AuthenticationCoreAPI.Awake));
+            ValidNullReferenceException.Execute(_uiLinq, nameof(AuthenticationCoreAPI.Awake));
+            ValidNullReferenceException.Execute(_uiLinq.Enter, nameof(AuthenticationCoreAPI.Awake));
+            ValidNullReferenceException.Execute(_uiLinq.Exit, nameof(AuthenticationCoreAPI.Awake));
+            ValidNullReferenceException.Execute(_uiLinq.LoginField, nameof(AuthenticationCoreAPI.Awake));
+            ValidNullReferenceException.Execute(_uiLinq.PasswordField, nameof(AuthenticationCoreAPI.Awake));
         }
 
         private void Start()
@@ -44,12 +44,20 @@ namespace Client.UI.Authentication
             bool successfullPassword = _uiLinq.PasswordField.text.Valid(ValidType.Password).CheckErrorCode();
 
             if (successfullLogin && successfullPassword)
-                _network.SendPacket(SendPacketTryAuthentication.ToPacket(_uiLinq.LoginField.text, _uiLinq.PasswordField.text));
+            {
+                _network.ChangeClientSession(authorization: true, matchSearch: false, gamePlaying: false);
+                _network.SendPacket(SendPacketTryAuthentication.ToPacket(_network.GetClientSession(), _uiLinq.LoginField.text, _uiLinq.PasswordField.text));
+            }
         }
 
         private void CallButtonForExitWithGame()
         {
             Application.Quit();
+        }
+
+        private void OnDisable()
+        {
+            DepedencyProvider.TryRemoveObject(DepedencyProvider.Code.ObjectAuthenticationAPI);
         }
     }
 }

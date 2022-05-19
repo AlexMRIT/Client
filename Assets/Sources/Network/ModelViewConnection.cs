@@ -1,5 +1,6 @@
 using System.Net;
 using UnityEngine;
+using Client.World;
 using Client.Utilite;
 using Client.Network;
 using System.Net.Sockets;
@@ -11,11 +12,18 @@ using System.Collections.Concurrent;
 
 namespace Client
 {
+    [RequireComponent(typeof(AsyncLoadScene))]
     public class ModelViewConnection : MonoBehaviour
     {
         private readonly TcpClient _client = new TcpClient();
         private ClientProcessor _clientProcessor;
         private readonly ConcurrentQueue<byte[]> _receiveBufferQueue = new ConcurrentQueue<byte[]>();
+        private readonly ClientSession _currentClientSession = new ClientSession(authorization: false, matchSearch: false, gamePlaying: false);
+
+        private void OnEnable()
+        {
+            DepedencyProvider.TryAddObject(DepedencyProvider.Code.ObjectClientProcessor, gameObject);
+        }
 
         private async void Awake()
         {
@@ -23,6 +31,7 @@ namespace Client
                 return;
 
             DontDestroyOnLoad(this);
+
             _clientProcessor = new ClientProcessor(_client, _receiveBufferQueue);
             bool resultConnect = await Task.Run(TryClientConnect);
 
@@ -56,5 +65,14 @@ namespace Client
         {
             _clientProcessor.WriteAsync(packet);
         }
+
+        public void ChangeClientSession(bool authorization, bool matchSearch, bool gamePlaying)
+        {
+            _currentClientSession.SessionClientAuthorization = authorization;
+            _currentClientSession.SessionClientMatchSearch = matchSearch;
+            _currentClientSession.SessionClientGamePlaying = gamePlaying;
+        }
+
+        public ClientSession GetClientSession() => _currentClientSession;
     }
 }

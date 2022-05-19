@@ -10,6 +10,8 @@ namespace Client.Utilite
         public static class Code
         {
             public readonly static byte ObjectAuthenticationAPI = 0x00;
+            public readonly static byte ObjectClientProcessor = 0x01;
+            public readonly static byte ObjectServerList = 0x02;
         }
 
         public static bool TryAddObject(byte code, GameObject gameObject)

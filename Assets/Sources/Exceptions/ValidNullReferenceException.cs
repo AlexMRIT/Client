@@ -4,9 +4,9 @@ namespace Client.Exceptions
 {
     public static class ValidNullReferenceException
     {
-        public static void Execute(Type type, string methodName)
+        public static void Execute(object type, string methodName)
         {
-            if (type == null)
+            if (type is null)
                 ExceptionHandler.Execute(new NullReferenceException(), methodName);
         }
     }

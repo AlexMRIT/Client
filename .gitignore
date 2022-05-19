@@ -15,3 +15,5 @@
 /.vsconfig
 /Assembly-CSharp.csproj
 /Client.sln
+/Game
+/Assets/Prefabs

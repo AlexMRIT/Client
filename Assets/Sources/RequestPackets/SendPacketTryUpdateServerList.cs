@@ -5,18 +5,15 @@ using Client.Utilite;
 
 namespace Client.RequestPackets
 {
-    public sealed class SendPacketTryAuthentication
+    public sealed class SendPacketTryUpdateServerList
     {
-        internal static NetworkPacket ToPacket(ClientSession session, string login, string password)
+        internal static NetworkPacket ToPacket(ClientSession session)
         {
-            NetworkPacket packet = new NetworkPacket(OpcodeExtension.OpcodeAuthentication);
+            NetworkPacket packet = new NetworkPacket(OpcodeExtension.OpcodeGetRoomsWindow);
 
             packet.InternalWriteBool(session.SessionClientAuthorization);
             packet.InternalWriteBool(session.SessionClientMatchSearch);
             packet.InternalWriteBool(session.SessionClientGamePlaying);
-
-            packet.WriteString(login);
-            packet.WriteString(password);
 
             return packet;
         }
