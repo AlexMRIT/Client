@@ -24,6 +24,8 @@ namespace Client
         private readonly ConcurrentQueue<byte[]> _receiveBufferQueue = new ConcurrentQueue<byte[]>();
         private readonly ClientSession _currentClientSession = new ClientSession(authorization: false, matchSearch: false, gamePlaying: false);
 
+
+        public PoolCharacters _poolCharacters { get; private set; }
         public Character _currentCharacter { get; private set; }
 
         private void OnEnable()
@@ -39,6 +41,7 @@ namespace Client
             DontDestroyOnLoad(this);
 
             _clientProcessor = new ClientProcessor(_client, _receiveBufferQueue);
+            _poolCharacters = new PoolCharacters();
             bool resultConnect = await Task.Run(TryClientConnect);
 
             if (!resultConnect)
@@ -81,10 +84,10 @@ namespace Client
 
         public ClientSession GetClientSession() => _currentClientSession;
 
-        public void CreateNetworkCharacter(CharacterContract characterContract, CharacterSpecification characterSpecification)
+        public void CreateNetworkCharacter(CharacterContract characterContract, CharacterSpecification characterSpecification, bool isBot = false)
         {
             _currentCharacter = Instantiate(_prefabCharacter, new Vector3(0f, 0f, 0f), Quaternion.identity).GetComponent<Character>();
-            _currentCharacter.Init(characterSpecification, characterContract);
+            _currentCharacter.Init(characterSpecification, characterContract, isBot);
         }
     }
 }

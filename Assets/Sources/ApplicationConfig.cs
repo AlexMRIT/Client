@@ -11,5 +11,6 @@
         public static readonly int MinPasswordLength = 4;
         public static readonly int MinServerNameLength = 4;
         public static readonly int MinServerDescriptionLength = 4;
+        public static readonly int MaxPlayersInRoom = 2;
     }
 }
